@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #1B4332;
+    --primary-light: #2D6A4F;
+    --accent: #52B788;
+    --accent-soft: #D8F3DC;
+    --gold: #E9C46A;
+    --gold-light: #FFF8E7;
+    --danger: #E63946;
+    --danger-soft: #FDECEA;
+    --warn: #F4A261;
+    --warn-soft: #FEF3EA;
+    --info: #4361EE;
+    --info-soft: #EEF1FD;
+    --text-primary: #1A1A2E;
+    --text-secondary: #5C5F6B;
+    --text-muted: #9B9DAA;
+    --surface: #FFFFFF;
+    --surface-2: #F7F8FA;
+    --surface-3: #EEF0F4;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+    --radius: 12px;
+    --radius-lg: 18px;
+    --font: 'DM Sans', sans-serif;
+    --font-display: 'Playfair Display', serif;
+  }
+
+  body { font-family: var(--font); background: var(--surface-2); color: var(--text-primary); min-height: 100vh; }
+
+  /* ── Layout ── */
+  .app { display: flex; min-height: 100vh; }
+  .sidebar { width: 240px; min-height: 100vh; background: var(--primary); padding: 0; display: flex; flex-direction: column; position: relative; flex-shrink: 0; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .content { flex: 1; padding: 28px; overflow-y: auto; }
+
+  /* ── Sidebar ── */
+  .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .brand-logo { display: flex; align-items: center; gap: 10px; }
+  .brand-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .brand-icon svg { width: 20px; height: 20px; stroke: white; fill: none; stroke-width: 2; }
+  .brand-name { font-family: var(--font-display); font-size: 15px; color: #fff; line-height: 1.2; }
+  .brand-sub { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .sidebar-section { padding: 20px 12px 8px; }
+  .sidebar-label { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; padding: 0 8px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: rgba(255,255,255,0.65); font-size: 14px; font-weight: 400; margin-bottom: 2px; }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .nav-item.active { background: rgba(82,183,136,0.25); color: var(--accent); font-weight: 500; }
+  .nav-item svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--accent); color: var(--primary); font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+
+  .sidebar-footer { margin-top: auto; padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .user-pill { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+  .user-pill:hover { background: rgba(255,255,255,0.08); }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--primary); flex-shrink: 0; }
+  .user-info { flex: 1; }
+  .user-name { font-size: 13px; color: #fff; font-weight: 500; }
+  .user-role { font-size: 11px; color: rgba(255,255,255,0.45); }
+
+  /* ── Topbar ── */
+  .page-title { font-family: var(--font-display); font-size: 20px; color: var(--text-primary); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .cycle-badge { background: var(--accent-soft); color: var(--primary-light); font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+  .cycle-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+  .icon-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+  .icon-btn:hover { background: var(--surface-2); border-color: var(--border-strong); }
+  .icon-btn svg { width: 17px; height: 17px; stroke: var(--text-secondary); fill: none; stroke-width: 1.8; }
+
+  /* ── Role Switcher ── */
+  .role-switcher { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface-2); }
+  .role-btn { padding: 6px 16px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); transition: all 0.2s; }
+  .role-btn.active { background: var(--primary); color: #fff; }
+
+  /* ── Views ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── Cards ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; }
+  .card-sm { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+
+  /* ── Stats Grid ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; position: relative; overflow: hidden; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 3px 3px 0 0; }
+  .stat-card.green::before { background: var(--accent); }
+  .stat-card.gold::before { background: var(--gold); }
+  .stat-card.info::before { background: var(--info); }
+  .stat-card.danger::before { background: var(--danger); }
+  .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-bottom: 10px; }
+  .stat-value { font-size: 28px; font-weight: 600; line-height: 1; margin-bottom: 6px; color: var(--text-primary); }
+  .stat-sub { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+  .stat-sub .up { color: var(--accent); }
+  .stat-sub .down { color: var(--danger); }
+
+  /* ── Grid Layouts ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* ── Section headers ── */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .section-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .section-link { font-size: 13px; color: var(--accent); cursor: pointer; font-weight: 500; text-decoration: none; }
+
+  /* ── Goal List ── */
+  .goal-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .goal-item:last-child { border-bottom: none; }
+  .goal-thumb { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+  .goal-info { flex: 1; min-width: 0; }
+  .goal-title { font-size: 14px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .goal-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .goal-progress { text-align: right; }
+  .goal-pct { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .goal-weight { font-size: 11px; color: var(--text-muted); }
+
+  /* ── Progress Bars ── */
+  .prog-bar { height: 6px; background: var(--surface-3); border-radius: 6px; overflow: hidden; margin-top: 6px; }
+  .prog-fill { height: 100%; border-radius: 6px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+
+  /* ── Status Badges ── */
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+  .badge-green { background: var(--accent-soft); color: #1B6B3A; }
+  .badge-gold { background: var(--gold-light); color: #8B6914; }
+  .badge-danger { background: var(--danger-soft); color: #B91C1C; }
+  .badge-info { background: var(--info-soft); color: #2141B0; }
+  .badge-gray { background: var(--surface-3); color: var(--text-secondary); }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ── Team Table ── */
+  .team-table { width: 100%; border-collapse: collapse; }
+  .team-table th { font-size: 11px; color: var(--text-muted); font-weight: 500; text-align: left; padding: 0 12px 10px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .team-table td { padding: 11px 12px; font-size: 13px; border-top: 1px solid var(--border); vertical-align: middle; }
+  .team-table tr:hover td { background: var(--surface-2); }
+  .member-cell { display: flex; align-items: center; gap: 10px; }
+  .av-sm { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+
+  /* ── Quarter Timeline ── */
+  .quarter-track { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .q-item { flex: 1; padding: 14px 16px; border-right: 1px solid var(--border); position: relative; }
+  .q-item:last-child { border-right: none; }
+  .q-item.done { background: var(--accent-soft); }
+  .q-item.active { background: var(--gold-light); }
+  .q-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+  .q-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .q-date { font-size: 11px; color: var(--text-muted); }
+  .q-status { margin-top: 8px; }
+
+  /* ── Form Styles ── */
+  .form-section { margin-bottom: 24px; }
+  .form-label { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; display: block; }
+  .form-hint { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .form-input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-family: var(--font); font-size: 14px; color: var(--text-primary); background: var(--surface); transition: border 0.2s; outline: none; }
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(82,183,136,0.12); }
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%239B9DAA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  /* ── Weightage Meter ── */
+  .weight-meter { background: var(--surface-3); border-radius: 8px; padding: 14px 16px; }
+  .weight-bar-bg { height: 10px; background: var(--border); border-radius: 10px; overflow: hidden; margin: 8px 0; }
+  .weight-bar-fill { height: 100%; border-radius: 10px; background: var(--accent); transition: width 0.5s; }
+  .weight-bar-fill.over { background: var(--danger); }
+  .weight-info { display: flex; justify-content: space-between; font-size: 12px; }
+  .weight-used { color: var(--text-primary); font-weight: 600; }
+  .weight-left { color: var(--text-muted); }
+
+  /* ── Goal Cards (Creation View) ── */
+  .goal-cards { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+  .goal-card-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; position: relative; }
+  .goal-card-item .goal-num { position: absolute; top: 16px; right: 16px; font-size: 11px; color: var(--text-muted); background: var(--surface-2); padding: 2px 8px; border-radius: 20px; }
+  .goal-card-item:hover { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(82,183,136,0.08); }
+
+  /* ── Buttons ── */
+  .btn { padding: 10px 20px; border-radius: 10px; font-family: var(--font); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-light); }
+  .btn-accent { background: var(--accent); color: var(--primary); }
+  .btn-accent:hover { background: #45a074; }
+  .btn-outline { background: transparent; border: 1px solid var(--border-strong); color: var(--text-secondary); }
+  .btn-outline:hover { background: var(--surface-2); }
+  .btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
+  .btn-danger-outline { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+  .btn-danger-outline:hover { background: var(--danger-soft); }
+
+  /* ── Action Bar ── */
+  .action-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .action-left { display: flex; align-items: center; gap: 12px; }
+
+  /* ── Toast / Alert ── */
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .alert-success { background: var(--accent-soft); color: #1B6B3A; border: 1px solid #B7E4C7; }
+  .alert-warn { background: var(--warn-soft); color: #8B4513; border: 1px solid #FAD7A0; }
+  .alert svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+  /* ── Chart Bar ── */
+  .mini-chart { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
+  .mini-bar { flex: 1; border-radius: 4px 4px 0 0; transition: height 0.5s; min-width: 12px; }
+  .chart-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+  .chart-label { font-size: 10px; color: var(--text-muted); text-align: center; flex: 1; }
+
+  /* ── Approval Panel ── */
+  .approval-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; }
+  .approval-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .approval-employee { display: flex; align-items: center; gap: 10px; }
+  .approval-goals-list { border-top: 1px solid var(--border); padding-top: 12px; }
+  .approval-goal-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid var(--surface-2); }
+  .approval-goal-row:last-child { border-bottom: none; }
+  .ag-title { flex: 1; color: var(--text-primary); }
+  .ag-uom { color: var(--text-muted); font-size: 12px; width: 70px; }
+  .ag-target { font-weight: 500; width: 70px; text-align: right; }
+  .ag-weight { color: var(--info); font-weight: 600; width: 50px; text-align: right; }
+  .approval-actions { display: flex; gap: 8px; }
+
+  /* ── Check-in View ── */
+  .checkin-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .checkin-header { padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .checkin-header:hover { background: var(--surface-2); }
+  .checkin-body { padding: 0 18px 16px; border-top: 1px solid var(--border); display: none; }
+  .checkin-body.open { display: block; padding-top: 14px; }
+  .checkin-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--surface-3); font-size: 13px; }
+  .checkin-row:last-child { border-bottom: none; }
+  .checkin-th { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; }
+
+  /* ── Admin View ── */
+  .audit-row { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .audit-row:last-child { border-bottom: none; }
+  .audit-time { color: var(--text-muted); font-size: 12px; width: 80px; flex-shrink: 0; }
+  .audit-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .audit-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .audit-text { flex: 1; color: var(--text-primary); }
+  .audit-text strong { font-weight: 500; }
+  .audit-text span { color: var(--text-muted); }
+
+  /* ── Heatmap ── */
+  .heatmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .hm-cell { padding: 12px; border-radius: 10px; text-align: center; }
+  .hm-dept { font-size: 11px; font-weight: 500; margin-bottom: 4px; }
+  .hm-pct { font-size: 18px; font-weight: 600; }
+  .hm-sub { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+  /* ── Analytics ── */
+  .trend-line { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .trend-label { font-size: 12px; color: var(--text-muted); width: 60px; flex-shrink: 0; }
+  .trend-bar-bg { flex: 1; height: 8px; background: var(--surface-3); border-radius: 8px; overflow: hidden; }
+  .trend-bar-fill { height: 100%; border-radius: 8px; }
+  .trend-value { font-size: 12px; font-weight: 600; width: 36px; text-align: right; color: var(--text-primary); }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  /* Scrollbar styling */
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
+
+  /* Chevron toggle */
+  .chevron { transition: transform 0.2s; }
+  .open .chevron { transform: rotate(180deg); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <div class="brand-name">GoalPulse</div>
+          <div class="brand-sub">AtomQuest 1.0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
+      <div class="nav-item active" onclick="goTo('dashboard')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="goTo('goals')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        My Goals
+        <span class="nav-badge">5</span>
+      </div>
+      <div class="nav-item" onclick="goTo('checkin')">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/></svg>
+        Check-in
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Management</div>
+      <div class="nav-item" onclick="goTo('approval')">
+        <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        Approvals
+        <span class="nav-badge">3</span>
+      </div>
+      <div class="nav-item" onclick="goTo('team')">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Team View
+      </div>
+      <div class="nav-item" onclick="goTo('admin')">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Admin Panel
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="avatar">RK</div>
+        <div class="user-info">
+          <div class="user-name">Rahul Kumar</div>
+          <div class="user-role" id="sidebar-role">Employee</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="cycle-badge">
+          <div class="cycle-dot"></div>
+          Q1 Check-in • July 2025
+        </div>
+        <div class="role-switcher">
+          <button class="role-btn active" onclick="switchRole('Employee')">Employee</button>
+          <button class="role-btn" onclick="switchRole('Manager')">Manager</button>
+          <button class="role-btn" onclick="switchRole('Admin')">Admin</button>
+        </div>
+        <div class="icon-btn" title="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ═══ DASHBOARD VIEW ═══ -->
+      <div class="view active" id="view-dashboard">
+
+        <div class="stats-grid">
+          <div class="stat-card green">
+            <div class="stat-label">Goals Submitted</div>
+            <div class="stat-value">5</div>
+            <div class="stat-sub"><span class="up">✓</span> Approved &amp; Locked</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Overall Progress</div>
+            <div class="stat-value">67%</div>
+            <div class="stat-sub"><span class="up">↑ 12%</span> from Q4</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-label">Check-ins Done</div>
+            <div class="stat-value">2/4</div>
+            <div class="stat-sub">Q1 &amp; Q2 complete</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-label">Pending Action</div>
+            <div class="stat-value">1</div>
+            <div class="stat-sub"><span class="down">!</span> Q1 update due</div>
+          </div>
+        </div>
+
+        <!-- Quarter Timeline -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="section-header">
+            <div class="section-title">Performance Cycle — FY 2025–26</div>
+            <span class="badge badge-info"><span class="badge-dot"></span>Q1 Active</span>
+          </div>
+          <div class="quarter-track">
+            <div class="q-item">
+              <div class="q-label">Phase 1</div>
+              <div class="q-name">Goal Setting</div>
+              <div class="q-date">May 1, 2025</div>
+              <div class="q-status"><span class="badge badge-green">✓ Completed</span></div>
+            </div>
+            <div class="q-item done">
+              <div class="q-label">Q1</div>
+              <div class="q-name">First Check-in</div>
+              <div class="q-date">July 2025</div>
+              <div class="q-status"><span class="badge badge-green">✓ Done</span></div>
+            </div>
+            <div class="q-item active">
+              <div class="q-label">Q2</div>
+              <div class="q-name">Mid-Year Review</div>
+              <div class="q-date">October 2025</div>
+              <div class="q-status"><span class="badge badge-gold">⚡ Upcoming</span></div>
+            </div>
+            <div class="q-item">
+              <div class="q-label">Q3</div>
+              <div class="q-name">Third Check-in</div>
+              <div class="q-date">January 2026</div>
+              <div class="q-status"><span class="badge badge-gray">Pending</span></div>
+            </div>
+            <div class="q-item">
+              <div class="q-label">Q4 / Annual</div>
+              <div class="q-name">Final Review</div>
+              <div class="q-date">Mar–Apr 2026</div>
+              <div class="q-status"><span class="badge badge-gray">Pending</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <!-- Goal Progress -->
+          <div class="card">
+            <div class="section-header">
+              <div class="section-title">My Goals Progress</div>
+              <span class="section-link" onclick="goTo('goals')">View all →</span>
+            </div>
+            <div class="goal-item">
+              <div class="goal-thumb" style="background:#D8F3DC">🎯</div>
+              <div class="goal-info">
+                <div class="goal-title">Revenue Growth — North Region</div>
+                <div class="goal-meta">Sales · Numeric · Target: ₹50L</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:78%;background:#52B788"></div></div>
+              </div>
+              <div class="goal-progress">
+                <div class="goal-pct">78%</div>
+                <div class="goal-weight">Wt: 25%</div>
+              </div>
+            </div>
+            <div class="goal-item">
+              <div class="goal-thumb" style="background:#FFF8E7">⚡</div>
+              <div class="goal-info">
+                <div class="goal-title">TAT Reduction — Onboarding</div>
+                <div class="goal-meta">Ops · Max (lower=better) · Target: 5 days</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:60%;background:#E9C46A"></div></div>
+              </div>
+              <div class="goal-progress">
+                <div class="goal-pct">60%</div>
+                <div class="goal-weight">Wt: 20%</div>
+              </div>
+            </div>
+            <div class="goal-item">
+              <div class="goal-thumb" style="background:#EEF1FD">📊</div>
+              <div class="goal-info">
+                <div class="goal-title">Customer NPS Improvement</div>
+                <div class="goal-meta">Customer · % · Target: 75%</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:88%;background:#4361EE"></div></div>
+              </div>
+              <div class="goal-progress">
+                <div class="goal-pct">88%</div>
+                <div class="goal-weight">Wt: 20%</div>
+              </div>
+            </div>
+            <div class="goal-item">
+              <div class="goal-thumb" style="background:#FDECEA">🔒</div>
+              <div class="goal-info">
+                <div class="goal-title">Zero Safety Incidents</div>
+                <div class="goal-meta">Safety · Zero-based · Target: 0</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:100%;background:#52B788"></div></div>
+              </div>
+              <div class="goal-progress">
+                <div class="goal-pct">100%</div>
+                <div class="goal-weight">Wt: 15%</div>
+              </div>
+            </div>
+            <div class="goal-item">
+              <div class="goal-thumb" style="background:#F7F8FA">📅</div>
+              <div class="goal-info">
+                <div class="goal-title">Product Launch — Q3</div>
+                <div class="goal-meta">Projects · Timeline · Deadline: Sep 30</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:45%;background:#F4A261"></div></div>
+              </div>
+              <div class="goal-progress">
+                <div class="goal-pct">45%</div>
+                <div class="goal-weight">Wt: 20%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel -->
+          <div>
+            <div class="card-sm" style="margin-bottom:16px">
+              <div class="section-title" style="margin-bottom:12px">Achievement by Quarter</div>
+              <div class="mini-chart">
+                <div class="mini-bar" style="height:32px;background:#D8F3DC" title="Q1 2024: 52%"></div>
+                <div class="mini-bar" style="height:40px;background:#B7E4C7" title="Q2 2024: 65%"></div>
+                <div class="mini-bar" style="height:35px;background:#95D5B2" title="Q3 2024: 57%"></div>
+                <div class="mini-bar" style="height:44px;background:#74C69D" title="Q4 2024: 71%"></div>
+                <div class="mini-bar" style="height:50px;background:#52B788" title="Q1 2025: 81%"></div>
+              </div>
+              <div class="chart-labels">
+                <div class="chart-label">Q1'24</div>
+                <div class="chart-label">Q2'24</div>
+                <div class="chart-label">Q3'24</div>
+                <div class="chart-label">Q4'24</div>
+                <div class="chart-label">Q1'25</div>
+              </div>
+            </div>
+
+            <div class="card-sm">
+              <div class="section-title" style="margin-bottom:12px">Goal Distribution</div>
+              <div class="trend-line">
+                <div class="trend-label">Sales</div>
+                <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:60%;background:#52B788"></div></div>
+                <div class="trend-value">25%</div>
+              </div>
+              <div class="trend-line">
+                <div class="trend-label">Ops</div>
+                <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:48%;background:#4361EE"></div></div>
+                <div class="trend-value">20%</div>
+              </div>
+              <div class="trend-line">
+                <div class="trend-label">Customer</div>
+                <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:48%;background:#E9C46A"></div></div>
+                <div class="trend-value">20%</div>
+              </div>
+              <div class="trend-line">
+                <div class="trend-label">Projects</div>
+                <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:48%;background:#F4A261"></div></div>
+                <div class="trend-value">20%</div>
+              </div>
+              <div class="trend-line">
+                <div class="trend-label">Safety</div>
+                <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:36%;background:#E63946"></div></div>
+                <div class="trend-value">15%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ GOALS CREATION VIEW ═══ -->
+      <div class="view" id="view-goals">
+        <div class="alert alert-success">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Goal Sheet submitted successfully. Awaiting Manager (L1) approval.
+        </div>
+        <div class="alert alert-warn">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Goals are locked after manager approval. Contact Admin to request edits.
+        </div>
+
+        <div class="grid-2" style="margin-bottom:20px">
+          <div class="card">
+            <div class="section-title" style="margin-bottom:4px">Create Goal Sheet</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">FY 2025–26 · May Cycle</div>
+
+            <div class="form-section">
+              <label class="form-label">Thrust Area</label>
+              <select class="form-input form-select">
+                <option>Sales & Business Development</option>
+                <option>Operations & Process</option>
+                <option>Customer Experience</option>
+                <option>Safety & Compliance</option>
+                <option>Projects & Innovation</option>
+                <option>People & Culture</option>
+              </select>
+            </div>
+
+            <div class="form-section">
+              <label class="form-label">Goal Title</label>
+              <input type="text" class="form-input" placeholder="e.g., Increase North Region Revenue by 20%" value="Revenue Growth — North Region">
+            </div>
+
+            <div class="form-section">
+              <label class="form-label">Description</label>
+              <textarea class="form-input" rows="2" placeholder="Briefly describe what this goal entails...">Drive ₹50L revenue through new client acquisition and account expansion in North region by Q4.</textarea>
+            </div>
+
+            <div class="form-row" style="margin-bottom:16px">
+              <div>
+                <label class="form-label">Unit of Measurement</label>
+                <select class="form-input form-select">
+                  <option>Min — Numeric (Higher is better)</option>
+                  <option>Max — Numeric (Lower is better)</option>
+                  <option>Percentage (%)</option>
+                  <option>Timeline (Date-based)</option>
+                  <option>Zero-based</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Target</label>
+                <input type="text" class="form-input" placeholder="e.g., 50 (in Lakhs)" value="50">
+              </div>
+            </div>
+
+            <div class="form-section">
+              <label class="form-label">Weightage (%)</label>
+              <div class="form-hint">Min 10% · Each goal · Total must equal 100%</div>
+              <input type="range" min="10" max="60" value="25" oninput="updateWeight(this.value)" style="width:100%;accent-color:var(--accent)">
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--primary);margin-top:4px" id="weight-display">25%</div>
+            </div>
+
+            <div class="weight-meter">
+              <div class="weight-info">
+                <span class="weight-used">Used: <span id="used-pct">100%</span></span>
+                <span class="weight-left">5 goals · Max 8 allowed</span>
+              </div>
+              <div class="weight-bar-bg">
+                <div class="weight-bar-fill" id="weight-bar" style="width:100%"></div>
+              </div>
+              <div class="weight-info">
+                <span style="font-size:11px;color:var(--accent)">✓ Total equals 100%</span>
+                <span style="font-size:11px;color:var(--text-muted)">Remaining: 0%</span>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:18px">
+              <button class="btn btn-accent btn-sm">+ Add Goal</button>
+              <button class="btn btn-primary btn-sm">Submit for Approval →</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="section-title" style="margin-bottom:14px">Goal Sheet Summary</div>
+              <div class="goal-cards">
+                <div class="goal-card-item">
+                  <span class="goal-num">Goal 1 · 25%</span>
+                  <div class="goal-title" style="font-size:13px;margin-bottom:4px">Revenue Growth — North Region</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+                    <span class="badge badge-info">Min · ₹50L</span>
+                    <span class="badge badge-green">✓ Approved</span>
+                  </div>
+                </div>
+                <div class="goal-card-item">
+                  <span class="goal-num">Goal 2 · 20%</span>
+                  <div class="goal-title" style="font-size:13px;margin-bottom:4px">TAT Reduction — Onboarding</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+                    <span class="badge badge-gold">Max · 5 days</span>
+                    <span class="badge badge-green">✓ Approved</span>
+                  </div>
+                </div>
+                <div class="goal-card-item">
+                  <span class="goal-num">Goal 3 · 20%</span>
+                  <div class="goal-title" style="font-size:13px;margin-bottom:4px">Customer NPS Improvement</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+                    <span class="badge badge-info">% · 75%</span>
+                    <span class="badge badge-green">✓ Approved</span>
+                  </div>
+                </div>
+                <div class="goal-card-item">
+                  <span class="goal-num">Goal 4 · 15%</span>
+                  <div class="goal-title" style="font-size:13px;margin-bottom:4px">Zero Safety Incidents</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+                    <span class="badge badge-danger">Zero-based</span>
+                    <span class="badge badge-green">✓ Approved</span>
+                  </div>
+                </div>
+                <div class="goal-card-item">
+                  <span class="goal-num">Goal 5 · 20%</span>
+                  <div class="goal-title" style="font-size:13px;margin-bottom:4px">Product Launch — Q3</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+                    <span class="badge badge-gray">Timeline · Sep 30</span>
+                    <span class="badge badge-green">✓ Approved</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CHECK-IN VIEW ═══ -->
+      <div class="view" id="view-checkin">
+        <div class="action-bar">
+          <div>
+            <div class="section-title" style="font-size:17px">Q1 Check-in · July 2025</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Update your actual achievement against planned targets</div>
+          </div>
+          <button class="btn btn-primary btn-sm">Submit Check-in →</button>
+        </div>
+
+        <div class="checkin-card">
+          <div class="checkin-header" onclick="toggleCheckin(this)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="goal-thumb" style="background:#D8F3DC;width:36px;height:36px;border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center">🎯</div>
+              <div>
+                <div style="font-size:14px;font-weight:500">Revenue Growth — North Region</div>
+                <div style="font-size:12px;color:var(--text-muted)">Min Numeric · Target: ₹50L · Weightage: 25%</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span class="badge badge-green">On Track</span>
+              <svg class="chevron" viewBox="0 0 24 24" width="16" height="16" style="stroke:var(--text-muted);fill:none;stroke-width:2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div class="checkin-body open">
+            <div class="checkin-row checkin-th">
+              <div>Goal</div><div>Q1 Planned</div><div>Q1 Actual</div><div>Score</div><div>Status</div>
+            </div>
+            <div class="checkin-row">
+              <div style="font-weight:500">Revenue (₹L)</div>
+              <div style="color:var(--text-secondary)">₹39L</div>
+              <div><input type="text" class="form-input" style="padding:6px 10px;font-size:13px" value="₹39L" placeholder="Enter actual"></div>
+              <div style="color:var(--accent);font-weight:600">78%</div>
+              <div>
+                <select class="form-input form-select" style="padding:6px 10px;font-size:12px">
+                  <option>On Track</option>
+                  <option>Not Started</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <label class="form-label">Self-comment</label>
+              <textarea class="form-input" rows="2" placeholder="Describe what you achieved and any blockers...">Strong pipeline in Delhi & NCR. Two major accounts closed in June. On track for Q2 target of ₹45L.</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkin-card">
+          <div class="checkin-header" onclick="toggleCheckin(this)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="goal-thumb" style="background:#FFF8E7;width:36px;height:36px;border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center">⚡</div>
+              <div>
+                <div style="font-size:14px;font-weight:500">TAT Reduction — Onboarding</div>
+                <div style="font-size:12px;color:var(--text-muted)">Max Numeric · Target: ≤5 days · Weightage: 20%</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span class="badge badge-gold">Partial</span>
+              <svg class="chevron" viewBox="0 0 24 24" width="16" height="16" style="stroke:var(--text-muted);fill:none;stroke-width:2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div class="checkin-body">
+            <div class="checkin-row checkin-th">
+              <div>Goal</div><div>Q1 Planned</div><div>Q1 Actual</div><div>Score</div><div>Status</div>
+            </div>
+            <div class="checkin-row">
+              <div style="font-weight:500">TAT (days)</div>
+              <div style="color:var(--text-secondary)">6 days</div>
+              <div><input type="text" class="form-input" style="padding:6px 10px;font-size:13px" value="8 days" placeholder="Enter actual"></div>
+              <div style="color:var(--warn);font-weight:600">60%</div>
+              <div>
+                <select class="form-input form-select" style="padding:6px 10px;font-size:12px">
+                  <option>On Track</option>
+                  <option selected>Not Started</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkin-card">
+          <div class="checkin-header" onclick="toggleCheckin(this)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="goal-thumb" style="background:#EEF1FD;width:36px;height:36px;border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center">📊</div>
+              <div>
+                <div style="font-size:14px;font-weight:500">Customer NPS Improvement</div>
+                <div style="font-size:12px;color:var(--text-muted)">Percentage · Target: 75% · Weightage: 20%</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span class="badge badge-green">Completed</span>
+              <svg class="chevron" viewBox="0 0 24 24" width="16" height="16" style="stroke:var(--text-muted);fill:none;stroke-width:2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div class="checkin-body"></div>
+        </div>
+
+        <div class="checkin-card">
+          <div class="checkin-header" onclick="toggleCheckin(this)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="goal-thumb" style="background:#FDECEA;width:36px;height:36px;border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center">🔒</div>
+              <div>
+                <div style="font-size:14px;font-weight:500">Zero Safety Incidents</div>
+                <div style="font-size:12px;color:var(--text-muted)">Zero-based · Target: 0 incidents · Weightage: 15%</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span class="badge badge-green">100% ✓</span>
+              <svg class="chevron" viewBox="0 0 24 24" width="16" height="16" style="stroke:var(--text-muted);fill:none;stroke-width:2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div class="checkin-body"></div>
+        </div>
+      </div>
+
+      <!-- ═══ APPROVAL VIEW (MANAGER) ═══ -->
+      <div class="view" id="view-approval">
+        <div class="action-bar">
+          <div>
+            <div class="section-title" style="font-size:17px">Pending Approvals</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">3 employees awaiting goal approval</div>
+          </div>
+          <span class="badge badge-danger" style="font-size:13px;padding:6px 14px">3 Pending</span>
+        </div>
+
+        <div class="approval-item">
+          <div class="approval-header">
+            <div class="approval-employee">
+              <div class="av-sm" style="background:#D8F3DC;color:#1B4332">PK</div>
+              <div>
+                <div style="font-size:14px;font-weight:500">Priya Kapoor</div>
+                <div style="font-size:12px;color:var(--text-muted)">Sr. Sales Executive · Submitted: 3 May 2025</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge badge-gold"><span class="badge-dot"></span>Awaiting Review</span>
+              <span style="font-size:12px;color:var(--text-muted)">Total Wt: 100%</span>
+            </div>
+          </div>
+          <div class="approval-goals-list">
+            <div class="approval-goal-row" style="font-weight:600;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px">
+              <div class="ag-title">Goal Title</div>
+              <div class="ag-uom">UoM</div>
+              <div class="ag-target">Target</div>
+              <div class="ag-weight">Wt%</div>
+              <div style="width:60px"></div>
+            </div>
+            <div class="approval-goal-row">
+              <div class="ag-title">Sales Revenue — Q1</div>
+              <div class="ag-uom"><span class="badge badge-info" style="font-size:10px">Min</span></div>
+              <div class="ag-target">₹45L</div>
+              <div class="ag-weight">30%</div>
+              <div style="width:60px"><span class="badge badge-gray" style="font-size:10px">Edit</span></div>
+            </div>
+            <div class="approval-goal-row">
+              <div class="ag-title">New Client Acquisition</div>
+              <div class="ag-uom"><span class="badge badge-info" style="font-size:10px">Min</span></div>
+              <div class="ag-target">15</div>
+              <div class="ag-weight">25%</div>
+              <div style="width:60px"></div>
+            </div>
+            <div class="approval-goal-row">
+              <div class="ag-title">Customer Retention Rate</div>
+              <div class="ag-uom"><span class="badge badge-gold" style="font-size:10px">%</span></div>
+              <div class="ag-target">90%</div>
+              <div class="ag-weight">25%</div>
+              <div style="width:60px"></div>
+            </div>
+            <div class="approval-goal-row">
+              <div class="ag-title">Zero Compliance Issues</div>
+              <div class="ag-uom"><span class="badge badge-danger" style="font-size:10px">Zero</span></div>
+              <div class="ag-target">0</div>
+              <div class="ag-weight">20%</div>
+              <div style="width:60px"></div>
+            </div>
+          </div>
+          <div style="margin-top:14px">
+            <label class="form-label" style="font-size:12px">Manager Comment (optional)</label>
+            <textarea class="form-input" rows="2" placeholder="Add feedback or approval note..." style="font-size:13px"></textarea>
+          </div>
+          <div class="approval-actions" style="margin-top:12px">
+            <button class="btn btn-accent btn-sm">✓ Approve Goals</button>
+            <button class="btn btn-outline btn-sm">↩ Return for Rework</button>
+            <button class="btn btn-outline btn-sm">✎ Edit Targets</button>
+          </div>
+        </div>
+
+        <div class="approval-item" style="opacity:0.6">
+          <div class="approval-header">
+            <div class="approval-employee">
+              <div class="av-sm" style="background:#EEF1FD;color:#2141B0">AJ</div>
+              <div>
+                <div style="font-size:14px;font-weight:500">Arjun Joshi</div>
+                <div style="font-size:12px;color:var(--text-muted)">Operations Lead · Submitted: 4 May 2025</div>
+              </div>
+            </div>
+            <span class="badge badge-gold"><span class="badge-dot"></span>Awaiting Review</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);padding:8px 0">5 goals submitted · Total Wt: 100%</div>
+          <div class="approval-actions">
+            <button class="btn btn-accent btn-sm">Review →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TEAM VIEW ═══ -->
+      <div class="view" id="view-team">
+        <div class="action-bar">
+          <div class="section-title" style="font-size:17px">Team Dashboard</div>
+          <button class="btn btn-outline btn-sm">↓ Export CSV</button>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom:20px">
+          <div class="stat-card green">
+            <div class="stat-label">Team Members</div>
+            <div class="stat-value">8</div>
+            <div class="stat-sub">All active</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Check-ins Done</div>
+            <div class="stat-value">6/8</div>
+            <div class="stat-sub"><span class="down">2 overdue</span></div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-label">Avg Achievement</div>
+            <div class="stat-value">71%</div>
+            <div class="stat-sub"><span class="up">↑ 8%</span> vs Q4</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-label">Goals Approved</div>
+            <div class="stat-value">5/8</div>
+            <div class="stat-sub">3 pending</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Team Members</div>
+            <div style="display:flex;gap:8px">
+              <select class="form-input form-select" style="padding:6px 12px;font-size:13px;width:auto">
+                <option>All Status</option><option>On Track</option><option>At Risk</option>
+              </select>
+            </div>
+          </div>
+          <table class="team-table">
+            <thead>
+              <tr>
+                <th>Member</th><th>Goals</th><th>Avg Progress</th><th>Q1 Check-in</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="member-cell"><div class="av-sm" style="background:#D8F3DC;color:#1B4332">RK</div><div><div style="font-weight:500">Rahul Kumar</div><div style="font-size:11px;color:var(--text-muted)">Sales Executive</div></div></div></td>
+                <td>5 goals</td>
+                <td><div style="display:flex;align-items:center;gap:8px"><div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:67%;background:#52B788"></div></div><span style="font-size:12px">67%</span></div></td>
+                <td><span class="badge badge-green">Done</span></td>
+                <td><span class="badge badge-green">On Track</span></td>
+                <td><span class="section-link" style="font-size:12px">View</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="av-sm" style="background:#EEF1FD;color:#2141B0">PK</div><div><div style="font-weight:500">Priya Kapoor</div><div style="font-size:11px;color:var(--text-muted)">Sr. Sales Exec.</div></div></div></td>
+                <td>4 goals</td>
+                <td><div style="display:flex;align-items:center;gap:8px"><div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:82%;background:#52B788"></div></div><span style="font-size:12px">82%</span></div></td>
+                <td><span class="badge badge-green">Done</span></td>
+                <td><span class="badge badge-green">On Track</span></td>
+                <td><span class="section-link" style="font-size:12px">View</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="av-sm" style="background:#FFF8E7;color:#8B6914">AJ</div><div><div style="font-weight:500">Arjun Joshi</div><div style="font-size:11px;color:var(--text-muted)">Ops Lead</div></div></div></td>
+                <td>5 goals</td>
+                <td><div style="display:flex;align-items:center;gap:8px"><div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:55%;background:#E9C46A"></div></div><span style="font-size:12px">55%</span></div></td>
+                <td><span class="badge badge-gold">Pending</span></td>
+                <td><span class="badge badge-gold">At Risk</span></td>
+                <td><span class="section-link" style="font-size:12px">Nudge</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="av-sm" style="background:#FDECEA;color:#B91C1C">SM</div><div><div style="font-weight:500">Sneha Mehta</div><div style="font-size:11px;color:var(--text-muted)">Customer Success</div></div></div></td>
+                <td>6 goals</td>
+                <td><div style="display:flex;align-items:center;gap:8px"><div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:90%;background:#52B788"></div></div><span style="font-size:12px">90%</span></div></td>
+                <td><span class="badge badge-green">Done</span></td>
+                <td><span class="badge badge-green">Excellent</span></td>
+                <td><span class="section-link" style="font-size:12px">View</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="av-sm" style="background:#F7F8FA;color:#5C5F6B">VN</div><div><div style="font-weight:500">Vikram Nair</div><div style="font-size:11px;color:var(--text-muted)">Projects</div></div></div></td>
+                <td>4 goals</td>
+                <td><div style="display:flex;align-items:center;gap:8px"><div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:40%;background:#E63946"></div></div><span style="font-size:12px">40%</span></div></td>
+                <td><span class="badge badge-danger">Overdue</span></td>
+                <td><span class="badge badge-danger">Behind</span></td>
+                <td><span class="section-link" style="font-size:12px">Escalate</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ ADMIN VIEW ═══ -->
+      <div class="view" id="view-admin">
+        <div class="action-bar">
+          <div class="section-title" style="font-size:17px">Admin Panel</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm">↓ Export Report</button>
+            <button class="btn btn-primary btn-sm">+ New Cycle</button>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="section-header"><div class="section-title">Completion Heatmap — Q1 Check-in</div></div>
+          <div class="heatmap">
+            <div class="hm-cell" style="background:#D8F3DC">
+              <div class="hm-dept" style="color:#1B4332">Sales</div>
+              <div class="hm-pct" style="color:#1B4332">87%</div>
+              <div class="hm-sub" style="color:#2D6A4F">7/8 done</div>
+            </div>
+            <div class="hm-cell" style="background:#B7E4C7">
+              <div class="hm-dept" style="color:#1B4332">Operations</div>
+              <div class="hm-pct" style="color:#1B4332">100%</div>
+              <div class="hm-sub" style="color:#2D6A4F">5/5 done</div>
+            </div>
+            <div class="hm-cell" style="background:#FFF8E7">
+              <div class="hm-dept" style="color:#8B6914">Customer</div>
+              <div class="hm-pct" style="color:#8B6914">60%</div>
+              <div class="hm-sub" style="color:#8B6914">3/5 done</div>
+            </div>
+            <div class="hm-cell" style="background:#FDECEA">
+              <div class="hm-dept" style="color:#B91C1C">Projects</div>
+              <div class="hm-pct" style="color:#B91C1C">33%</div>
+              <div class="hm-sub" style="color:#B91C1C">1/3 done</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Audit Trail -->
+          <div class="card">
+            <div class="section-header">
+              <div class="section-title">Audit Trail</div>
+              <span class="badge badge-info">Live</span>
+            </div>
+            <div class="audit-row">
+              <div class="audit-time">2:14 PM</div>
+              <div class="audit-icon" style="background:#D8F3DC;color:#1B4332">
+                <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <div class="audit-text"><strong>Priya Kapoor</strong>'s goals <span>approved by Manager (L1) Ramesh Sharma</span></div>
+            </div>
+            <div class="audit-row">
+              <div class="audit-time">1:40 PM</div>
+              <div class="audit-icon" style="background:#EEF1FD;color:#2141B0">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <div class="audit-text"><strong>Admin</strong> unlocked goal <span>#G-004 for Arjun Joshi — exception override</span></div>
+            </div>
+            <div class="audit-row">
+              <div class="audit-time">11:22 AM</div>
+              <div class="audit-icon" style="background:#FFF8E7;color:#8B6914">
+                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <div class="audit-text"><span>Escalation auto-triggered: </span><strong>Vikram Nair</strong><span> Q1 check-in overdue by 5 days</span></div>
+            </div>
+            <div class="audit-row">
+              <div class="audit-time">9:05 AM</div>
+              <div class="audit-icon" style="background:#D8F3DC;color:#1B4332">
+                <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <div class="audit-text"><strong>Rahul Kumar</strong> submitted <span>Q1 check-in — 5 goals updated</span></div>
+            </div>
+            <div class="audit-row">
+              <div class="audit-time">Yesterday</div>
+              <div class="audit-icon" style="background:#FDECEA;color:#B91C1C">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <div class="audit-text"><strong>Manager</strong> returned <span>Sneha Mehta's goals for rework — weightage issue</span></div>
+            </div>
+          </div>
+
+          <!-- Cycle Config -->
+          <div class="card">
+            <div class="section-title" style="margin-bottom:16px">Cycle Configuration</div>
+            <div class="form-section">
+              <label class="form-label">Active Cycle</label>
+              <select class="form-input form-select">
+                <option>FY 2025–26 (Current)</option>
+                <option>FY 2024–25 (Archived)</option>
+              </select>
+            </div>
+            <div class="form-row" style="margin-bottom:16px">
+              <div>
+                <label class="form-label">Goal Setting Opens</label>
+                <input type="date" class="form-input" value="2025-05-01">
+              </div>
+              <div>
+                <label class="form-label">Goal Setting Closes</label>
+                <input type="date" class="form-input" value="2025-05-31">
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="section-title" style="margin-bottom:12px;font-size:13px">Escalation Rules</div>
+            <div style="font-size:13px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:8px">
+                <div>
+                  <div style="font-weight:500">Goal not submitted</div>
+                  <div style="font-size:11px;color:var(--text-muted)">After cycle opens</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input type="number" value="7" class="form-input" style="width:60px;padding:6px 10px;font-size:13px">
+                  <span style="font-size:12px;color:var(--text-muted)">days</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:8px">
+                <div>
+                  <div style="font-weight:500">Manager not approved</div>
+                  <div style="font-size:11px;color:var(--text-muted)">After submission</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input type="number" value="5" class="form-input" style="width:60px;padding:6px 10px;font-size:13px">
+                  <span style="font-size:12px;color:var(--text-muted)">days</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:8px">
+                <div>
+                  <div style="font-weight:500">Check-in overdue</div>
+                  <div style="font-size:11px;color:var(--text-muted)">Within active window</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input type="number" value="3" class="form-input" style="width:60px;padding:6px 10px;font-size:13px">
+                  <span style="font-size:12px;color:var(--text-muted)">days</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="margin-top:16px;width:100%">Save Configuration</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function goTo(view) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+
+    const titles = {
+      dashboard: 'Dashboard',
+      goals: 'My Goals',
+      checkin: 'Q1 Check-in',
+      approval: 'Pending Approvals',
+      team: 'Team Dashboard',
+      admin: 'Admin Panel'
+    };
+    document.getElementById('page-title').textContent = titles[view] || 'GoalPulse';
+
+    const navMap = {
+      dashboard: 0, goals: 1, checkin: 2,
+      approval: 3, team: 4, admin: 5
+    };
+    const items = document.querySelectorAll('.nav-item');
+    if (items[navMap[view]]) items[navMap[view]].classList.add('active');
+  }
+
+  function switchRole(role) {
+    document.querySelectorAll('.role-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent === role);
+    });
+    document.getElementById('sidebar-role').textContent = role;
+    if (role === 'Manager') goTo('approval');
+    else if (role === 'Admin') goTo('admin');
+    else goTo('dashboard');
+  }
+
+  function updateWeight(val) {
+    document.getElementById('weight-display').textContent = val + '%';
+  }
+
+  function toggleCheckin(header) {
+    const body = header.nextElementSibling;
+    const isOpen = body.classList.toggle('open');
+    header.classList.toggle('open', isOpen);
+  }
+</script>
+</body>
+</html>
